@@ -1,0 +1,26 @@
+{
+  "name": "avisos-cobro-primavera",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "nodemon",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/mustache": "^4.2.5",
+    "@types/node": "^24.9.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "csvtojson": "^2.0.13",
+    "date-fns": "^4.1.0",
+    "node-html-to-image": "^5.0.0",
+    "nodemon": "^3.1.10",
+    "puppeteer": "^23.11.1"
+  }
+}

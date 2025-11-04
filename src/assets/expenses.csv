@@ -1,0 +1,10 @@
+Fecha,Tipo,Descripción,Monto en Dólares,Tasa de dolar usada,Monto en Bolívares
+29/10/2025,Gastos Variables,texto largo sin comas texto largo sin comastexto largo sin comastexto largo sin comastexto largo sin comastexto largo sin comastexto largo sin comastexto largo sin comastexto largo sin comastexto largo sin comastexto largo sin comas,$1.00,Bs300.00,Bs300.00
+29/10/2025,Gastos Fijos,Prueba gastos fijo 1,$1.50,Bs300.00,Bs450.00
+29/10/2025,Gastos Públicos,Prueba gastos público 1,$2.00,Bs300.00,Bs600.00
+29/10/2025,Gastos Variables,Gastos variable 2,$2.50,Bs300.00,Bs750.00
+29/10/2025,Gastos Fijos,Prueba gastos fijo 2,$3.00,Bs300.00,Bs900.00
+29/10/2025,Gastos Públicos,Prueba gastos público 2,$4.50,Bs300.00,"Bs1,350.00"
+29/10/2025,Gastos Variables,Gastos variable 3,$6.00,Bs300.00,"Bs1,800.00"
+29/10/2025,Gastos Fijos,Prueba gastos fijo 3,$5.00,Bs300.00,"Bs1,500.00"
+29/10/2025,Gastos Públicos,Prueba gastos público 3,$7.00,Bs300.00,"Bs2,100.00"
