@@ -4,7 +4,6 @@ import csvtojson from "csvtojson";
 import { ExpenseRecordFromCSV } from "../types";
 
 const HEADER_RENAMES: (keyof ExpenseRecordFromCSV)[] = [
-  "date",
   "type",
   "description",
   "usdAmount",

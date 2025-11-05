@@ -104,7 +104,7 @@ export class Owner {
       this.apartment = data.apartment;
       this.name = data.name;
       this.aliquot =
-        Number(data.aliquot.replace("%", "").replace(",", "")) / 100;
+        Number(data.aliquot.replace("%", "").replace(",", ""))
       this.specialPayment = {
         usd: Number(data.specialPaymentUsd.replace("$", "").replace(",", "")),
         bolivars: Number(
