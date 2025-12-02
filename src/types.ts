@@ -1,5 +1,27 @@
-import { isValid, format } from "date-fns";
-import { cliInputs } from "./functions/cli-inputs";
+import { format } from "date-fns";
+import { SPANISH_NAME_DICTIONARY } from "./constants";
+
+const normalizeSpanishDescription = (text: string): string => {
+  if (!text) return "";
+
+  let normalized = text.toLowerCase().replace(/\s+/g, " ").trim();
+
+  normalized = normalized.replace(
+    /(^|[.!?]\s+)(\p{L})/gu,
+    (match, separator, char) => separator + char.toLocaleUpperCase("es-ES")
+  );
+
+  normalized = normalized.replace(/c\.a\.?/gi, "C.A.");
+
+  for (const entry of SPANISH_NAME_DICTIONARY) {
+    const search = (entry.pattern ?? entry.replacement).toLowerCase();
+    const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(escaped, "gi");
+    normalized = normalized.replace(regex, entry.replacement);
+  }
+
+  return normalized;
+};
 
 export enum ExpenseType {
   Gastos_Fijos = "Gastos Fijos",
@@ -51,7 +73,7 @@ export class ExpenseRecord {
   constructor(data: ExpenseRecordFromCSV) {
     this.date = data.date;
     this.type = data.type;
-    this.description = data.description;
+    this.description = normalizeSpanishDescription(data.description);
 
     try {
       const usdAmount = Number(
@@ -103,8 +125,7 @@ export class Owner {
     try {
       this.apartment = data.apartment;
       this.name = data.name;
-      this.aliquot =
-        Number(data.aliquot.replace("%", "").replace(",", ""))
+      this.aliquot = Number(data.aliquot.replace("%", "").replace(",", ""));
       this.specialPayment = {
         usd: Number(data.specialPaymentUsd.replace("$", "").replace(",", "")),
         bolivars: Number(

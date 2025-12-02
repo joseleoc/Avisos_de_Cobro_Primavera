@@ -13,7 +13,7 @@
         padding-right: 50px;
 
         height: auto;
-        width: auto;
+        width: 1400px;
         box-sizing: border-box;
         font-family: "Roboto", sans-serif;
         display: flex;
@@ -77,6 +77,13 @@
         text-align: center;
       }
 
+
+      main > div {
+        display: flex; 
+        justify-content: center;
+        align-items: center;
+      }
+
       table {
         border-collapse: collapse;
         table-layout: auto;
@@ -106,7 +113,21 @@
         background-color: lightgray;
       }
 
+      footer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+      }
+
       footer > section {
+        display: flex;
+        flex-direction: row;
+        gap: 5rem;
+      }
+
+      footer > section > div {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -122,9 +143,9 @@
       <div class="headerContent">
         <div class="headerInfoContent text-center">
           <p class="bold">Junta de Condominio Residencias Primavera</p>
-          <p>RIF: J-XXXXXXXX</p>
-          <p>Address Line 1</p>
-          <p>Address Line 2</p>
+          <p>RIF: J-311907319</p>
+          <p>Calle Francisco Anzil Urb. La magdalena, Paseo de las Ferias</p>
+          <p>Mérida, Edo Mérida</p>
         </div>
 
         <table>
@@ -142,12 +163,12 @@
           </tr>
           <tr>
             <td>ALICUOTA:</td>
-            <td>{{multiply owner.aliquot 100 }}%</td>
+            <td>{{multiply owner.aliquot 100 6}}%</td>
           </tr>
 
           <tr>
-            <td>Tasa referencial del dólar:</td>
-            <td>${{formatAmount dollarPrice}}</td>
+            <td class="bold">TASA REFERENCIAL DEL BCV:</td>
+            <td>Bs{{formatAmount dollarPrice}}</td>
           </tr>
         </table>
       </div>
@@ -156,120 +177,138 @@
     <main>
       <h4>AVISO DE COBRO EMITIDO EL DÍA {{emissionDate}}</h4>
       <h4>FECHA DE VENCIMIENTO {{expirationDate}}</h4>
+      <div>
+        <table>
+          <thead>
+            <tr>
+              <th colspan="2">CONCEPTO</th>
+              <th>MONTO $</th>
+              <th>MONTO Bs</th>
+              <th>CUOTAPARTE $</th>
+              <th>CUOTAPARTE Bs</th>
+            </tr>
+          </thead>
 
-      <table>
-        <thead>
-          <tr>
-            <th>FECHA</th>
-            <th>CONCEPTO</th>
-            <th>MONTO $</th>
-            <th>MONTO Bs</th>
-            <th>CUOTAPARTE $</th>
-            <th>CUOTAPARTE Bs</th>
-          </tr>
-        </thead>
+          <tbody>
+            {{#each types}}
+            <tr class="highlighted-row-medium">
+              <td colspan="6" class="bold">{{type}}</td>
+            </tr>
 
-        <tbody>
-          {{#each types}}
-          <tr class="highlighted-row-medium">
-            <td colspan="6" class="bold">{{type}}</td>
-          </tr>
+            {{#each records}}
+            <tr>
+              <td colspan="2">{{description}}</td>
+              <td>${{formatAmount amount.usd}}</td>
+              <td>Bs{{formatAmount amount.bolivars}}</td>
+              <td>${{formatAmount ownerAmount.usd}}</td>
+              <td>Bs{{formatAmount ownerAmount.bolivars}}</td>
+            </tr>
+            {{/each}}
+            <tr class="highlighted-row-light">
+              <td colspan="2" class="bold text-start">Subtotal de {{type}}</td>
+              <td class="">${{formatAmount groupTotalAmount.usd}}</td>
+              <td>Bs{{formatAmount groupTotalAmount.bolivars}}</td>
+              <td>${{ formatAmount ownerGroupTotalAmount.usd }}</td>
+              <td>Bs{{formatAmount ownerGroupTotalAmount.bolivars }}</td>
+            </tr>
+            {{/each}}
 
-          {{#each records}}
-          <tr>
-            <td>{{date}}</td>
-            <td>{{description}}</td>
-            <td>${{formatAmount amount.usd}}</td>
-            <td>Bs{{formatAmount amount.bolivars}}</td>
-            <td>${{formatAmount ownerAmount.usd}}</td>
-            <td>Bs{{formatAmount ownerAmount.bolivars}}</td>
-          </tr>
-          {{/each}}
-          <tr class="highlighted-row-light">
-            <td colspan="2" class="bold text-start">Subtotal de {{type}}</td>
-            <td class="">${{formatAmount groupTotalAmount.usd}}</td>
-            <td>Bs{{formatAmount groupTotalAmount.bolivars}}</td>
-            <td>${{ formatAmount ownerGroupTotalAmount.usd }}</td>
-            <td>Bs{{formatAmount ownerGroupTotalAmount.bolivars }}</td>
-          </tr>
-          {{/each}}
+            <tr>
+              <td class="no-borders text-end" colspan="2">
+                TOTAL GENERAL DE GASTOS
+              </td>
+              <td>${{formatAmount totalAmount.usd}}</td>
+              <td>Bs{{formatAmount totalAmount.bolivars}}</td>
+              <td>${{formatAmount owner.baseAmountToPay.usd}}</td>
+              <td>Bs{{formatAmount owner.baseAmountToPay.bolivars}}</td>
+            </tr>
 
-          <tr>
-            <td class="no-borders text-end" colspan="2">
-              TOTAL GENERAL DE GASTOS
-            </td>
-            <td>${{formatAmount totalAmount.usd}}</td>
-            <td>Bs{{formatAmount totalAmount.bolivars}}</td>
-            <td>${{formatAmount owner.baseAmountToPay.usd}}</td>
-            <td>Bs{{formatAmount owner.baseAmountToPay.bolivars}}</td>
-          </tr>
+            <tr>
+              <td class="no-borders text-end" colspan="2">
+                FONDO DE RESERVA 10%
+              </td>
+              <td>${{formatAmount reserveAmount.usd}}</td>
+              <td>Bs{{formatAmount reserveAmount.bolivars}}</td>
+              <td>${{formatAmount owner.reserveAmount.usd}}</td>
+              <td>Bs{{formatAmount owner.reserveAmount.bolivars}}</td>
+            </tr>
 
-          <tr>
-            <td class="no-borders text-end" colspan="2">
-              FONDO DE RESERVA 10%
-            </td>
-            <td>${{formatAmount reserveAmount.usd}}</td>
-            <td>Bs{{formatAmount reserveAmount.bolivars}}</td>
-            <td>${{formatAmount owner.reserveAmount.usd}}</td>
-            <td>Bs{{formatAmount owner.reserveAmount.bolivars}}</td>
-          </tr>
+            <tr>
+              <td class="no-borders text-end" colspan="2">ALICUOTA DEL MES</td>
+              <td>${{sum totalAmount.usd reserveAmount.usd 2}}</td>
+              <td>Bs{{sum totalAmount.bolivars reserveAmount.bolivars 2}}</td>
+              <td>${{formatAmount owner.monthPaymentAmount.usd }}</td>
+              <td>Bs{{formatAmount owner.monthPaymentAmount.bolivars}}</td>
+            </tr>
 
-          <tr>
-            <td class="no-borders text-end" colspan="4">ALICUOTA DEL MES</td>
-            <td>${{formatAmount owner.monthPaymentAmount.usd }}</td>
-            <td>Bs{{formatAmount owner.monthPaymentAmount.bolivars}}</td>
-          </tr>
+            <tr>
+              <td class="no-borders text-end" colspan="4">
+                DEUDA PENDIENTE CONDOMINIO
+              </td>
+              <td>${{formatAmount owner.outstandingDebt.usd}}</td>
+              <td>Bs{{formatAmount owner.outstandingDebt.bolivars}}</td>
+            </tr>
 
-          <tr>
-            <td class="no-borders text-end" colspan="4">
-              DEUDA PENDIENTE CONDOMINIO MES ANTERIOR
-            </td>
-            <td>${{formatAmount owner.outstandingDebt.usd}}</td>
-            <td>Bs{{formatAmount owner.outstandingDebt.bolivars}}</td>
-          </tr>
+            {{#if owner.specialPayment.usd}}
+            <tr>
+              <td class="no-borders text-end" colspan="4">
+                DEUDA PENDIENTE DE CUOTAS ESPECIALES
+              </td>
+              <td>${{formatAmount owner.specialPayment.usd}}</td>
+              <td>Bs{{formatAmount owner.specialPayment.bolivars}}</td>
+            </tr>
+            {{/if}}
 
-          {{#if owner.specialPayment.usd}}
-          <tr>
-            <td class="no-borders text-end" colspan="4">
-              DEUDA PENDIENTE DE CUOTA ESPECIAL
-            </td>
-            <td>${{formatAmount owner.specialPayment.usd}}</td>
-            <td>Bs{{formatAmount owner.specialPayment.bolivars}}</td>
-          </tr>
-          {{/if}}
-
-          <tr>
-            <td class="no-borders text-end bold" colspan="4">TOTAL A PAGAR</td>
-            <td>${{formatAmount owner.totalAmountToPay.usd}}</td>
-            <td>Bs{{formatAmount owner.totalAmountToPay.bolivars}}</td>
-          </tr>
-        </tbody>
-      </table>
+            <tr>
+              <td class="no-borders text-end bold" colspan="4">
+                TOTAL A PAGAR
+              </td>
+              <td class="bold">${{formatAmount owner.totalAmountToPay.usd}}</td>
+              <td class="bold">
+                Bs{{formatAmount owner.totalAmountToPay.bolivars}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </main>
 
     <footer>
+      <p>
+        *El recibo deberá ser pagado antes de su fecha de vencimiento, en
+        divisas o a través de transferencia electrónica a:
+      </p>
       <section>
-        <p>
-          *El recibo deberá ser pagado antes de su fecha de vencimiento, en
-          divisas o a través de transferencia electrónica a:
-        </p>
-        <p class="bold">Junta de Condominio Residencias Primavera</p>
-        <p class="bold">Banco XXXXXX</p>
-        <p class="bold">Cuenta corriente No XXXXXXXXXXX</p>
-        <p class="bold">Rif: No. J-XXXXXXXXX</p>
+        <div class="text-center bold">
+          <p>Junta de Condominio Residencias Primavera</p>
+          <p>Banco Bicentenario (Banco digital de los trabajadores)</p>
+          <p>Cuenta Jurídica</p>
+          <p>Cuenta corriente No 01750541620076901284</p>
+          <p>Rif: No. J-311907319</p>
+        </div>
+
+        <div class="text-center bold">
+          <p>Pago Móvil</p>
+          <p>Banco Bicentenario (Banco digital de los trabajadores)</p>
+          <p>04245649923</p>
+          <p>J311907319</p>
+        </div>
       </section>
 
       <section class="items-start">
-        <p class="bold">Nota:</p>
-        <p class="bold">
-          La plantilla de liquidación de gastos comunes están calculados en
-          divisas, referenciados según el dólar americano (USD) publicado por el
-          bcv el día de la factuacipon.
-        </p>
-        <p class="bold">
-          Pagos en Bolívares, será a la tasa vigente publicada por el BCV para
-          el día en que se haga efectivo el pago.
-        </p>
+        <div>
+          <p class="bold">Nota:</p>
+          <p class="bold">
+            La plantilla de liquidación de gastos comunes están calculados en
+            divisas, referenciados según el dólar americano (USD) publicado por
+            el bcv el día de la facturación.
+          </p>
+          <p class="bold">
+            Pagos en Bolívares, será a la tasa vigente publicada por el BCV para
+            el día en que se haga efectivo el pago. Aprobado por carta consulta
+            el 28/07/25 con el 89.46% de participación de los vecinos.
+          </p>
+        </div>
       </section>
     </footer>
   </body>

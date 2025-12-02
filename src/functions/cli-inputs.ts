@@ -7,62 +7,78 @@ const DEFAULT_EMISSION_DATE = format(new Date(), "dd/MM/yy");
 const DEFAULT_EXPIRATION_DATE = format(addDays(new Date(), 5), "dd/MM/yy");
 
 export const cliInputs = async (): Promise<CLIInputs> => {
-  try {
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  const question = (prompt: string, defaultValue: string) =>
+    new Promise<string>((resolve) => {
+      rl.question(`${prompt} (${defaultValue}): `, (answer) => {
+        resolve(answer || defaultValue);
+      });
     });
 
-    const question = (prompt: string, defaultValue: string) =>
-      new Promise<string>((resolve) => {
-        rl.question(`${prompt} (${defaultValue}): `, (answer) => {
-          resolve(answer || defaultValue);
-        });
-      });
-
+  while (true) {
     // Obtain Dolar price
-    const price = Number(
-      await question(
+    let price: number;
+    while (true) {
+      const priceAnswer = await question(
         "Ingrese el precio de dolar en bolivares: ",
         DEFAULT_DOLLAR_PRICE.toString()
-      )
-    );
-    if (isNaN(price)) {
-      throw new Error("Precio inválido");
+      );
+      price = Number(priceAnswer);
+      if (!isNaN(price)) {
+        break;
+      }
+      console.log("Precio inválido. Intente de nuevo.");
     }
 
     // Obtain Emission Date
-    const emissionDate = await question(
-      "Ingrese la fecha de emisión en formato dd/mm/aa: ",
-      DEFAULT_EMISSION_DATE
-    );
+    let parsedEmissionDate: Date;
+    let emissionDateISO: string;
+    while (true) {
+      const emissionDate = await question(
+        "Ingrese la fecha de emisión en formato dd/mm/aa: ",
+        DEFAULT_EMISSION_DATE
+      );
 
-    const parsedEmissionDate = parse(emissionDate, "dd/MM/yy", new Date());
-    if (!isValid(parsedEmissionDate)) {
-      throw new Error("Fecha de emisión inválida");
+      parsedEmissionDate = parse(emissionDate, "dd/MM/yy", new Date());
+      if (!isValid(parsedEmissionDate)) {
+        console.log("Fecha de emisión inválida. Intente de nuevo.");
+        continue;
+      }
+      emissionDateISO = parsedEmissionDate.toISOString();
+      break;
     }
-    const emissionDateISO = parsedEmissionDate.toISOString();
 
     // Obtain Expiration Date
-    const expirationDate = await question(
-      "Ingrese la fecha de expiración en formato dd/mm/aa: ",
-      DEFAULT_EXPIRATION_DATE
-    );
+    let parsedExpirationDate: Date;
+    let expirationDateISO: string;
+    while (true) {
+      const expirationDate = await question(
+        "Ingrese la fecha de expiración en formato dd/mm/aa: ",
+        DEFAULT_EXPIRATION_DATE
+      );
 
-    const parsedExpirationDate = parse(expirationDate, "dd/MM/yy", new Date());
-    if (!isValid(parsedExpirationDate)) {
-      throw new Error("Fecha de expiración inválida");
+      parsedExpirationDate = parse(expirationDate, "dd/MM/yy", new Date());
+      if (!isValid(parsedExpirationDate)) {
+        console.log("Fecha de expiración inválida. Intente de nuevo.");
+        continue;
+      }
+      expirationDateISO = parsedExpirationDate.toISOString();
+      break;
     }
-    const expirationDateISO = parsedExpirationDate.toISOString();
+
+    // Verify emission date is before expiration date
+    if (isAfter(parsedEmissionDate, parsedExpirationDate)) {
+      console.log(
+        "Fecha de emisión debe ser anterior a la fecha de expiración. Ingrese los datos nuevamente."
+      );
+      continue;
+    }
 
     rl.close();
-
-    // Verify emision date is after than expiration date
-    if (isAfter(parsedEmissionDate, parsedExpirationDate)) {
-      throw new Error(
-        "Fecha de emisión debe ser anterior a la fecha de expiración"
-      );
-    }
 
     console.log(`Precio: ${price} por dólar`);
     console.log(`Fecha de emisión: ${emissionDateISO}`);
@@ -73,8 +89,5 @@ export const cliInputs = async (): Promise<CLIInputs> => {
       emissionDate: emissionDateISO,
       expirationDate: expirationDateISO,
     };
-  } catch (error) {
-    console.error("Error al obtener los inputs", error);
-    process.exit(1);
   }
 };
