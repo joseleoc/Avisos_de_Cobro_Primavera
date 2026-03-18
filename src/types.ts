@@ -1,27 +1,4 @@
 import { format } from "date-fns";
-import { SPANISH_NAME_DICTIONARY } from "./constants";
-
-const normalizeSpanishDescription = (text: string): string => {
-  if (!text) return "";
-
-  let normalized = text.toLowerCase().replace(/\s+/g, " ").trim();
-
-  normalized = normalized.replace(
-    /(^|[.!?]\s+)(\p{L})/gu,
-    (match, separator, char) => separator + char.toLocaleUpperCase("es-ES")
-  );
-
-  normalized = normalized.replace(/c\.a\.?/gi, "C.A.");
-
-  for (const entry of SPANISH_NAME_DICTIONARY) {
-    const search = (entry.pattern ?? entry.replacement).toLowerCase();
-    const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = new RegExp(escaped, "gi");
-    normalized = normalized.replace(regex, entry.replacement);
-  }
-
-  return normalized;
-};
 
 export enum ExpenseType {
   Gastos_Fijos = "Gastos Fijos",
@@ -73,15 +50,11 @@ export class ExpenseRecord {
   constructor(data: ExpenseRecordFromCSV) {
     this.date = data.date;
     this.type = data.type;
-    this.description = normalizeSpanishDescription(data.description);
+    this.description = data.description || "";
 
     try {
-      const usdAmount = Number(
-        data.usdAmount.replace("$", "").replace(",", "")
-      );
-      const bolivarsAmount = Number(
-        data.bolivarsAmount.replace("Bs", "").replace(",", "")
-      );
+      const usdAmount = Number(data.usdAmount.replace("$", "").replace(",", ""));
+      const bolivarsAmount = Number(data.bolivarsAmount.replace("Bs", "").replace(",", ""));
       this.amount = {
         usd: usdAmount,
         bolivars: bolivarsAmount,
@@ -128,15 +101,11 @@ export class Owner {
       this.aliquot = Number(data.aliquot.replace("%", "").replace(",", ""));
       this.specialPayment = {
         usd: Number(data.specialPaymentUsd.replace("$", "").replace(",", "")),
-        bolivars: Number(
-          data.specialPaymentBolivars.replace("Bs", "").replace(",", "")
-        ),
+        bolivars: Number(data.specialPaymentBolivars.replace("Bs", "").replace(",", "")),
       };
       this.outstandingDebt = {
         usd: Number(data.outstandingDebtUsd.replace("$", "").replace(",", "")),
-        bolivars: Number(
-          data.outstandingDebtBolivars.replace("Bs", "").replace(",", "")
-        ),
+        bolivars: Number(data.outstandingDebtBolivars.replace("Bs", "").replace(",", "")),
       };
     } catch (error) {
       console.error("Error parsing owner amounts", error);
@@ -174,14 +143,11 @@ export class OwnerExpenses extends Owner {
 
     // Reserve
     this.reserveAmount.usd = this.baseAmountToPay.usd * this.reservePercentage;
-    this.reserveAmount.bolivars =
-      this.baseAmountToPay.bolivars * this.reservePercentage;
+    this.reserveAmount.bolivars = this.baseAmountToPay.bolivars * this.reservePercentage;
 
     // Total month payment (base amount + reserve )
-    this.monthPaymentAmount.usd =
-      this.baseAmountToPay.usd + this.reserveAmount.usd;
-    this.monthPaymentAmount.bolivars =
-      this.baseAmountToPay.bolivars + this.reserveAmount.bolivars;
+    this.monthPaymentAmount.usd = this.baseAmountToPay.usd + this.reserveAmount.usd;
+    this.monthPaymentAmount.bolivars = this.baseAmountToPay.bolivars + this.reserveAmount.bolivars;
 
     // Total amount to pay (base amount + special payment + reserve + outstanding debt)
     this.totalAmountToPay.usd =
@@ -223,8 +189,7 @@ export class ExpensesTableData {
 
     // Calcular reserva
     this.reserveAmount.usd = this.totalAmount.usd * this.reservePercentage;
-    this.reserveAmount.bolivars =
-      this.totalAmount.bolivars * this.reservePercentage;
+    this.reserveAmount.bolivars = this.totalAmount.bolivars * this.reservePercentage;
   }
 
   private handleDates(emissionDate: string, expirationDate: string) {
@@ -245,23 +210,20 @@ export class ExpensesTableData {
         type,
         records: this.expensesRecords[type],
         groupTotalAmount: {
-          usd: this.expensesRecords[type].reduce(
-            (total, expense) => total + expense.amount.usd,
-            0
-          ),
+          usd: this.expensesRecords[type].reduce((total, expense) => total + expense.amount.usd, 0),
           bolivars: this.expensesRecords[type].reduce(
             (total, expense) => total + expense.amount.bolivars,
-            0
+            0,
           ),
         },
         ownerGroupTotalAmount: {
           usd: this.expensesRecords[type].reduce(
             (total, expense) => total + expense.ownerAmount.usd,
-            0
+            0,
           ),
           bolivars: this.expensesRecords[type].reduce(
             (total, expense) => total + expense.ownerAmount.bolivars,
-            0
+            0,
           ),
         },
       });
@@ -274,10 +236,7 @@ export class ExpensesTableData {
     }
 
     expenses.forEach((expense) => {
-      const expenseRecord = new ExpenseRecordWithOwnerData(
-        expense,
-        this.owner.aliquot
-      );
+      const expenseRecord = new ExpenseRecordWithOwnerData(expense, this.owner.aliquot);
 
       if (!this.expensesRecords[expense.type]) {
         this.expensesRecords[expense.type] = [];
@@ -294,18 +253,14 @@ export class ExpensesTableData {
     if (this.owner == null) {
       throw new Error("Owner is null");
     }
-    this.totalAmount.usd = this.types.reduce(
-      (total, type) => total + type.groupTotalAmount.usd,
-      0
-    );
+    this.totalAmount.usd = this.types.reduce((total, type) => total + type.groupTotalAmount.usd, 0);
     this.totalAmount.bolivars = this.types.reduce(
       (total, type) => total + type.groupTotalAmount.bolivars,
-      0
+      0,
     );
 
     this.reserveAmount.usd = this.totalAmount.usd * this.reservePercentage;
-    this.reserveAmount.bolivars =
-      this.totalAmount.bolivars * this.reservePercentage;
+    this.reserveAmount.bolivars = this.totalAmount.bolivars * this.reservePercentage;
 
     this.owner.calculateTotalAmountToPay();
   }

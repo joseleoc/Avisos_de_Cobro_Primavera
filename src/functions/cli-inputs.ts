@@ -4,7 +4,10 @@ import { CLIInputs } from "../types";
 
 const DEFAULT_DOLLAR_PRICE = 6.5;
 const DEFAULT_EMISSION_DATE = format(new Date(), "dd/MM/yy");
-const DEFAULT_EXPIRATION_DATE = format(addDays(new Date(), 5), "dd/MM/yy");
+const DEFAULT_EXPIRATION_DATE = format(
+  new Date(new Date().getFullYear(), new Date().getMonth(), 15),
+  "dd/MM/yy"
+);
 
 export const cliInputs = async (): Promise<CLIInputs> => {
   const rl = readline.createInterface({

@@ -2,6 +2,7 @@ import path from "path";
 import nodeHtmlToImage from "node-html-to-image";
 import fs from "fs";
 import { ExpensesTableData } from "../types";
+import { ApartmentsToShowOnlyDollars } from "../constants";
 
 const templatePath = path.join(
   process.cwd(),
@@ -10,7 +11,15 @@ const templatePath = path.join(
   "expenses.html"
 );
 
+const templateOnlyDollarsPath = path.join(
+  process.cwd(),
+  "src",
+  "templates",
+  "expenses-only-dollars.html"
+);
+
 const template = fs.readFileSync(templatePath, "utf-8");
+const templateOnlyDollars = fs.readFileSync(templateOnlyDollarsPath, "utf-8");
 const logo = fs.readFileSync(
   path.join(process.cwd(), "src", "assets", "logo.png")
 );
@@ -30,9 +39,12 @@ export async function generateExpensesImg(
     );
     await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
 
+    let showOnlyDollars =
+      ApartmentsToShowOnlyDollars[expense.owner.apartment] ?? false;
+
     return nodeHtmlToImage({
       output: outputPath,
-      html: template,
+      html: showOnlyDollars ? templateOnlyDollars : template,
       content: { ...expense, imageSource: logoDataURI },
       quality: 100,
     });
