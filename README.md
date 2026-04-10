@@ -35,7 +35,9 @@ temp/                # Generated PNG notices (grouped by month)
 ## Setup
 ```bash
 npm install
+npx puppeteer browsers install chrome
 ```
+
 
 ## Running the generator
 ```bash
