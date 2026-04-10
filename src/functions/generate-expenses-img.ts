@@ -4,6 +4,7 @@ import puppeteer from "puppeteer";
 import fs from "fs";
 import { ExpensesTableData } from "../types";
 import { ApartmentsToShowOnlyDollars } from "../constants";
+import { handlebarsHelpers } from "../handlebarsHelpers";
 
 const templatePath = path.join(
   process.cwd(),
@@ -48,7 +49,8 @@ export async function generateExpensesImg(
       content: { ...expense, imageSource: logoDataURI },
       quality: 100,
       puppeteer,
-    });
+      handlebarsHelpers,
+    } as any);
 
     return expense.owner.apartment;
   });
