@@ -168,7 +168,7 @@
 
           <tr>
             <td class="bold">TASA REFERENCIAL DEL BCV:</td>
-            <td>Bs{{formatAmount dollarPrice}}</td>
+            <td>${{formatAmount dollarPrice}}</td>
           </tr>
         </table>
       </div>
@@ -182,8 +182,8 @@
           <thead>
             <tr>
               <th colspan="2">CONCEPTO</th>
-              <th>MONTO Bs</th>
-              <th>CUOTAPARTE Bs</th>
+              <th>MONTO $</th>
+              <th>CUOTAPARTE $</th>
             </tr>
           </thead>
 
@@ -196,14 +196,14 @@
             {{#each records}}
             <tr>
               <td colspan="2" class="text-start">{{description}}</td>
-              <td>Bs{{formatAmount amount.bolivars}}</td>
-              <td>Bs{{formatAmount ownerAmount.bolivars}}</td>
+              <td>${{formatAmount amount.usd}}</td>
+              <td>${{formatAmount ownerAmount.usd}}</td>
             </tr>
             {{/each}}
             <tr class="highlighted-row-light">
               <td colspan="2" class="bold text-start">Subtotal de {{type}}</td>
-              <td>Bs{{formatAmount groupTotalAmount.bolivars}}</td>
-              <td>Bs{{formatAmount ownerGroupTotalAmount.bolivars }}</td>
+              <td class="">${{formatAmount groupTotalAmount.usd}}</td>
+              <td>${{ formatAmount ownerGroupTotalAmount.usd }}</td>
             </tr>
             {{/each}}
 
@@ -211,37 +211,37 @@
               <td class="no-borders text-end" colspan="2">
                 TOTAL GENERAL DE GASTOS
               </td>
-              <td>Bs{{formatAmount totalAmount.bolivars}}</td>
-              <td>Bs{{formatAmount owner.baseAmountToPay.bolivars}}</td>
+              <td>${{formatAmount totalAmount.usd}}</td>
+              <td>${{formatAmount owner.baseAmountToPay.usd}}</td>
             </tr>
 
             <tr>
               <td class="no-borders text-end" colspan="2">
                 FONDO DE RESERVA 10%
               </td>
-              <td>Bs{{formatAmount reserveAmount.bolivars}}</td>
-              <td>Bs{{formatAmount owner.reserveAmount.bolivars}}</td>
+              <td>${{formatAmount reserveAmount.usd}}</td>
+              <td>${{formatAmount owner.reserveAmount.usd}}</td>
             </tr>
 
             <tr>
               <td class="no-borders text-end" colspan="2">ALICUOTA DEL MES</td>
-              <td>Bs{{sum totalAmount.bolivars reserveAmount.bolivars 2}}</td>
-              <td>Bs{{formatAmount owner.monthPaymentAmount.bolivars}}</td>
+              <td>${{sum totalAmount.usd reserveAmount.usd 2}}</td>
+              <td>${{formatAmount owner.monthPaymentAmount.usd }}</td>
             </tr>
 
             <tr>
               <td class="no-borders text-end" colspan="3">
                 DEUDA PENDIENTE CONDOMINIO
               </td>
-              <td>Bs{{formatAmount owner.outstandingDebt.bolivars}}</td>
+              <td>${{formatAmount owner.outstandingDebt.usd}}</td>
             </tr>
 
-            {{#if owner.specialPayment.bolivars}}
+            {{#if owner.specialPayment.usd}}
             <tr>
               <td class="no-borders text-end" colspan="3">
                 DEUDA PENDIENTE DE CUOTAS ESPECIALES
               </td>
-              <td>Bs{{formatAmount owner.specialPayment.bolivars}}</td>
+              <td>${{formatAmount owner.specialPayment.usd}}</td>
             </tr>
             {{/if}}
 
@@ -249,9 +249,7 @@
               <td class="no-borders text-end bold" colspan="3">
                 TOTAL A PAGAR
               </td>
-              <td class="bold">
-                Bs{{formatAmount owner.totalAmountToPay.bolivars}}
-              </td>
+              <td class="bold">${{formatAmount owner.totalAmountToPay.usd}}</td>
             </tr>
           </tbody>
         </table>
@@ -261,7 +259,7 @@
     <footer>
       <p>
         *El recibo deberá ser pagado antes de su fecha de vencimiento, en
-        bolívares a través de transferencia electrónica a:
+        divisas o a través de transferencia electrónica a:
       </p>
 
 
@@ -269,9 +267,13 @@
         <div>
           <p class="bold">Nota:</p>
           <p class="bold">
-            La plantilla de liquidación de gastos comunes está expresada en
-            bolívares (Bs), con base en la tasa vigente publicada por el BCV
-            para el día de la facturación.
+            La plantilla de liquidación de gastos comunes están calculados en
+            divisas, referenciados según el dólar americano (USD) publicado por
+            el bcv el día de la facturación.
+          </p>
+          <p class="bold">
+            Los pagos serán en divisas. Aprobado por carta consulta
+            el 28/07/25 con el 89.46% de participación de los vecinos.
           </p>
         </div>
       </section>
