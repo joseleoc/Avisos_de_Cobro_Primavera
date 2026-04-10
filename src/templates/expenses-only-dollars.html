@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aviso de cobro Residencias primavera</title>
+
+    <style>
+      body {
+        padding-top: 75px;
+        padding-bottom: 75px;
+        padding-left: 50px;
+        padding-right: 50px;
+
+        height: auto;
+        width: 1400px;
+        box-sizing: border-box;
+        font-family: "Roboto", sans-serif;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      p {
+        margin: 0;
+        padding: 0;
+        text-wrap: pretty;
+      }
+
+      .bold {
+        font-weight: bold;
+      }
+
+      .items-start {
+        align-items: start;
+      }
+
+      .text-start {
+        text-align: start;
+      }
+
+      .text-center {
+        text-align: center;
+      }
+
+      .text-end {
+        text-align: end;
+      }
+
+      header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+      }
+
+      .headerContent {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 50px;
+      }
+
+      .headerInfoContent {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+      }
+
+      .logo {
+        width: 75%;
+        height: auto;
+        object-fit: contain;
+        text-align: center;
+      }
+
+
+      main > div {
+        display: flex; 
+        justify-content: center;
+        align-items: center;
+      }
+
+      table {
+        border-collapse: collapse;
+        table-layout: auto;
+        text-align: center;
+        vertical-align: center;
+      }
+
+      th,
+      td {
+        border: 1px solid black;
+      }
+      th,
+      td {
+        padding: 0.5rem;
+      }
+
+      .no-borders {
+        border: none;
+        border-style: none;
+      }
+
+      .highlighted-row-medium {
+        background-color: gray;
+      }
+
+      .highlighted-row-light {
+        background-color: lightgray;
+      }
+
+      footer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+      }
+
+      footer > section {
+        display: flex;
+        flex-direction: row;
+        gap: 5rem;
+      }
+
+      footer > section > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="{{imageSource}}" class="logo" />
+
+      <div class="headerContent">
+        <div class="headerInfoContent text-center">
+          <p class="bold">Junta de Condominio Residencias Primavera</p>
+          <p>RIF: J-311907319</p>
+          <p>Calle Francisco Anzil Urb. La magdalena, Paseo de las Ferias</p>
+          <p>Mérida, Edo Mérida</p>
+        </div>
+
+        <table>
+          <tr>
+            <td class="bold">Mes:</td>
+            <td class="bold">{{currentMonth}}</td>
+          </tr>
+          <tr>
+            <td>APTO:</td>
+            <td>{{owner.apartment}}</td>
+          </tr>
+          <tr>
+            <td>Propietario:</td>
+            <td>{{owner.name}}</td>
+          </tr>
+          <tr>
+            <td>ALICUOTA:</td>
+            <td>{{multiply owner.aliquot 100 6}}%</td>
+          </tr>
+
+          <tr>
+            <td class="bold">TASA REFERENCIAL DEL BCV:</td>
+            <td>Bs{{formatAmount dollarPrice}}</td>
+          </tr>
+        </table>
+      </div>
+    </header>
+
+    <main>
+      <h4>AVISO DE COBRO EMITIDO EL DÍA {{emissionDate}}</h4>
+      <h4>FECHA DE VENCIMIENTO {{expirationDate}}</h4>
+      <div>
+        <table>
+          <thead>
+            <tr>
+              <th colspan="2">CONCEPTO</th>
+              <th>MONTO Bs</th>
+              <th>CUOTAPARTE Bs</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {{#each types}}
+            <tr class="highlighted-row-medium">
+              <td colspan="4" class="bold">{{type}}</td>
+            </tr>
+
+            {{#each records}}
+            <tr>
+              <td colspan="2" class="text-start">{{description}}</td>
+              <td>Bs{{formatAmount amount.bolivars}}</td>
+              <td>Bs{{formatAmount ownerAmount.bolivars}}</td>
+            </tr>
+            {{/each}}
+            <tr class="highlighted-row-light">
+              <td colspan="2" class="bold text-start">Subtotal de {{type}}</td>
+              <td>Bs{{formatAmount groupTotalAmount.bolivars}}</td>
+              <td>Bs{{formatAmount ownerGroupTotalAmount.bolivars }}</td>
+            </tr>
+            {{/each}}
+
+            <tr>
+              <td class="no-borders text-end" colspan="2">
+                TOTAL GENERAL DE GASTOS
+              </td>
+              <td>Bs{{formatAmount totalAmount.bolivars}}</td>
+              <td>Bs{{formatAmount owner.baseAmountToPay.bolivars}}</td>
+            </tr>
+
+            <tr>
+              <td class="no-borders text-end" colspan="2">
+                FONDO DE RESERVA 10%
+              </td>
+              <td>Bs{{formatAmount reserveAmount.bolivars}}</td>
+              <td>Bs{{formatAmount owner.reserveAmount.bolivars}}</td>
+            </tr>
+
+            <tr>
+              <td class="no-borders text-end" colspan="2">ALICUOTA DEL MES</td>
+              <td>Bs{{sum totalAmount.bolivars reserveAmount.bolivars 2}}</td>
+              <td>Bs{{formatAmount owner.monthPaymentAmount.bolivars}}</td>
+            </tr>
+
+            <tr>
+              <td class="no-borders text-end" colspan="3">
+                DEUDA PENDIENTE CONDOMINIO
+              </td>
+              <td>Bs{{formatAmount owner.outstandingDebt.bolivars}}</td>
+            </tr>
+
+            {{#if owner.specialPayment.bolivars}}
+            <tr>
+              <td class="no-borders text-end" colspan="3">
+                DEUDA PENDIENTE DE CUOTAS ESPECIALES
+              </td>
+              <td>Bs{{formatAmount owner.specialPayment.bolivars}}</td>
+            </tr>
+            {{/if}}
+
+            <tr>
+              <td class="no-borders text-end bold" colspan="3">
+                TOTAL A PAGAR
+              </td>
+              <td class="bold">
+                Bs{{formatAmount owner.totalAmountToPay.bolivars}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <footer>
+      <p>
+        *El recibo deberá ser pagado antes de su fecha de vencimiento, en
+        bolívares a través de transferencia electrónica a:
+      </p>
+
+
+      <section class="items-start">
+        <div>
+          <p class="bold">Nota:</p>
+          <p class="bold">
+            La plantilla de liquidación de gastos comunes está expresada en
+            bolívares (Bs), con base en la tasa vigente publicada por el BCV
+            para el día de la facturación.
+          </p>
+        </div>
+      </section>
+    </footer>
+  </body>
+</html>
