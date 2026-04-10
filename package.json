@@ -19,6 +19,7 @@
   "dependencies": {
     "csvtojson": "^2.0.13",
     "date-fns": "^4.1.0",
+    "handlebars": "^4.7.9",
     "node-html-to-image": "^5.0.0",
     "nodemon": "^3.1.10",
     "puppeteer": "^23.11.1"
