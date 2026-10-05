@@ -5,14 +5,14 @@ import "./handlebarsHelpers";
 import { readOwners } from "./functions/read-owners";
 import { cliInputs } from "./functions/cli-inputs";
 import { buildExpenses } from "./functions/build-expenses";
-import { generateExpensesImg } from "./functions/generate-expenses-img";
+import { generateExpensesOutput } from "./functions/generate-expenses-output";
 
 async function runOnce() {
   const cliData = await cliInputs();
   const owners = await readOwners();
   const expenses = await readExpenses();
   const expensesTableData = await buildExpenses(expenses, owners, cliData);
-  await generateExpensesImg(expensesTableData);
+  await generateExpensesOutput(expensesTableData, cliData.outputFormat);
 }
 
 const askRestart = async (): Promise<boolean> => {

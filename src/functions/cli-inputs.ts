@@ -1,6 +1,6 @@
 import readline from "readline";
 import { parse, isValid, isAfter, format, addDays } from "date-fns";
-import { CLIInputs } from "../types";
+import { CLIInputs, OutputFormat } from "../types";
 
 const DEFAULT_DOLLAR_PRICE = 6.5;
 const DEFAULT_EMISSION_DATE = format(new Date(), "dd/MM/yy");
@@ -8,6 +8,7 @@ const DEFAULT_EXPIRATION_DATE = format(
   new Date(new Date().getFullYear(), new Date().getMonth(), 15),
   "dd/MM/yy"
 );
+const DEFAULT_OUTPUT_FORMAT: OutputFormat = "pdf";
 
 export const cliInputs = async (): Promise<CLIInputs> => {
   const rl = readline.createInterface({
@@ -23,6 +24,25 @@ export const cliInputs = async (): Promise<CLIInputs> => {
     });
 
   while (true) {
+    // Obtain output format
+    let outputFormat: OutputFormat;
+    while (true) {
+      const formatAnswer = await question(
+        "Seleccione el formato de salida (pdf/imagen): ",
+        DEFAULT_OUTPUT_FORMAT
+      );
+      const normalizedFormat = formatAnswer.trim().toLowerCase();
+      if (normalizedFormat === "pdf") {
+        outputFormat = "pdf";
+        break;
+      }
+      if (["imagen", "image", "img", "png"].includes(normalizedFormat)) {
+        outputFormat = "image";
+        break;
+      }
+      console.log("Formato inválido. Escriba 'pdf' o 'imagen'.");
+    }
+
     // Obtain Dolar price
     let price: number;
     while (true) {
@@ -83,6 +103,7 @@ export const cliInputs = async (): Promise<CLIInputs> => {
 
     rl.close();
 
+    console.log(`Formato de salida: ${outputFormat}`);
     console.log(`Precio: ${price} por dólar`);
     console.log(`Fecha de emisión: ${emissionDateISO}`);
     console.log(`Fecha de expiración: ${expirationDateISO}`);
@@ -91,6 +112,7 @@ export const cliInputs = async (): Promise<CLIInputs> => {
       dollarPrice: price,
       emissionDate: emissionDateISO,
       expirationDate: expirationDateISO,
+      outputFormat,
     };
   }
 };

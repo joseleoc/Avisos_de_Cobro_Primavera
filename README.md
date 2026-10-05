@@ -1,20 +1,20 @@
 # Avisos de Cobro Primavera
 
-Avisos de Cobro Primavera is a TypeScript/Node.js CLI that turns monthly condominium expenses into ready-to-send billing notices. The tool ingests owner and expense data from CSV files, calculates individual balances, and renders polished PNG images using an HTML template.
+Avisos de Cobro Primavera is a TypeScript/Node.js CLI that turns monthly condominium expenses into ready-to-send billing notices. The tool ingests owner and expense data from CSV files, calculates individual balances, and renders polished PDF or PNG notices using an HTML template.
 
 ## What the project does
-- Collects CLI inputs (dollar price, emission date, expiration date) for the billing cycle.
+- Collects CLI inputs (output format, dollar price, emission date, expiration date) for the billing cycle.
 - Reads owners and expenses from CSV spreadsheets and converts them into typed objects.
 - Calculates subtotals, reserve funds, arrears, and totals per owner.
-- Generates a high-quality billing notice image for each owner based on a Handlebars HTML template.
+- Generates a high-quality billing notice (PDF by default, or PNG) for each owner based on a Handlebars HTML template.
 
 ## How it works
-1. **CLI input capture** – `cli-inputs.ts` prompts for rate and dates, validates them with `date-fns`, and returns normalized ISO strings for downstream processing (@src/functions/cli-inputs.ts#1-76).
+1. **CLI input capture** – `cli-inputs.ts` prompts for output format (PDF by default, or image), rate, and dates, validates them with `date-fns`, and returns normalized values for downstream processing (@src/functions/cli-inputs.ts#1-76).
 2. **Data ingestion** – `read-owners.ts` and `read-expenses.ts` parse their respective CSV files with `csvtojson`, mapping headers to strongly typed records (@src/functions/read-owners.ts#1-31, @src/functions/read-expenses.ts#1-34).
 3. **Computation** – `build-expenses.ts` wraps each owner in an `ExpensesTableData` instance, adds every expense, and derives totals, reserves, and outstanding balances (@src/functions/build-expenses.ts#1-23, @src/types.ts#182-299).
-4. **Rendering** – `generate-expenses-img.ts` merges the pre-computed data with the Handlebars template and converts the HTML into PNG images through `node-html-to-image` (@src/functions/generate-expenses-img.ts#1-48).
+4. **Rendering** – `generate-expenses-output.ts` merges the pre-computed data with the Handlebars template and renders it to PDF via Puppeteer, or to PNG via `node-html-to-image`, depending on the selected format (@src/functions/generate-expenses-output.ts).
 
-The entry point in `src/index.ts` orchestrates the flow: read CLI input, load CSVs, build expense tables, and render the final notices (@src/index.ts#1-15).
+The entry point in `src/index.ts` orchestrates the flow: read CLI input, load CSVs, build expense tables, and render the final notices (@src/index.ts#1-16).
 
 ## Project structure
 ```
@@ -25,7 +25,7 @@ src/
   handlebarsHelpers.ts # Formatting helpers for Handlebars
   index.ts           # CLI entry point
   types.ts           # Domain models and calculations
-temp/                # Generated PNG notices (grouped by month)
+temp/                # Generated PDF/PNG notices (grouped by month)
 ```
 
 ## Prerequisites
@@ -44,9 +44,9 @@ npx puppeteer browsers install chrome
 npm run start
 ```
 
-1. Provide the prompted dollar price, emission date, and expiration date (defaults are pre-filled).
+1. Provide the prompted output format (`pdf` or `imagen`, defaults to `pdf`), dollar price, emission date, and expiration date (defaults are pre-filled).
 2. Confirm that `src/assets/owners.csv` and `src/assets/expenses.csv` contain the data you want to process.
-3. The generator writes PNG files to `temp/<mes>/<apartamento>-<mes>.png` and logs progress to the console.
+3. The generator writes files to `temp/<mes>/<apartamento>-<mes>.pdf` (or `.png` if the image format was selected) and logs progress to the console.
 
 ## Input data examples
 The generator expects the following column order and formatting in the CSV files.

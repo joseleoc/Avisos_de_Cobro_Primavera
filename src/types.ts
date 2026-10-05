@@ -6,11 +6,14 @@ export enum ExpenseType {
   Gastos_Públicos = "Gastos Públicos",
 }
 
+export type OutputFormat = "pdf" | "image";
+
 export type CLIInputs = {
   dollarPrice: number;
   emissionDate: string;
   expirationDate: string;
   reservePercentage?: number;
+  outputFormat: OutputFormat;
 };
 
 export interface ExpenseRecordFromCSV {
